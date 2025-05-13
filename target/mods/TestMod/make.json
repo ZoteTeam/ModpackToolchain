@@ -1,0 +1,37 @@
+{
+  "info": {
+    "name": "TestMod",
+    "version": "1.0.0",
+    "description": "Test description",
+    "icon": "mod_icon.png"
+  },
+
+  "config": "config.json",
+
+  "assets": [],
+  "additionally": [
+    {
+      "source": "libs"
+    },
+    {
+      "source": "test.txt"
+    }
+  ],
+
+  "source": [
+    {
+      "type": "launcher",
+      "source": "launcher.js"
+    },
+    {
+      "type": "mod",
+      "name": "main.js",
+      "source": "dev"
+    },
+
+    {
+      "type": "library",
+      "source": "libs/Test-lib.js"
+    }
+  ]
+}

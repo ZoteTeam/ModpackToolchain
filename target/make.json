@@ -1,0 +1,34 @@
+{
+  "pushTo": "/storage/emulated/0/Android/media/com.zheka.horizon64/packs/Inner_Core__ARM64_/modpacks",
+  "serverVersion": "indev-1.5.0",
+  "proxy": "innercore.novadev.ru:666",
+
+  "author": "Reider745",
+  "description": "Test description",
+  "version": "1.0.0",
+
+  "mods": [
+    {"modId": 2, "name": "BuildCraft"}
+  ],
+
+  "client": {
+    "servers": [
+      {
+        "name": "Test server",
+        "ip": "fuck.org",
+        "port": 19132
+      }
+    ],
+    "name": "Test client",
+    "mods": [
+      {"modId": 1, "name": "MP-ArmorStand"},
+      {"path": "mods/TestMod"}
+    ]
+  },
+
+  "server": {
+    "name": "Test server",
+    "mods": [
+    ]
+  }
+}
