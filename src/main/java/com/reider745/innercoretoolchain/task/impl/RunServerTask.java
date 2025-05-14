@@ -1,8 +1,9 @@
-package com.reider745.innercoretoolchain.task;
+package com.reider745.innercoretoolchain.task.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
+import com.reider745.innercoretoolchain.task.Task;
 import com.reider745.innercoretoolchain.util.DownloadUtil;
 import com.reider745.innercoretoolchain.util.Logs;
 

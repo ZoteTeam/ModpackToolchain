@@ -2,7 +2,7 @@ package com.reider745.innercoretoolchain.make.mod;
 
 import com.android.tools.r8.SwissArmyKnife;
 import com.google.gson.Gson;
-import com.reider745.innercoretoolchain.Main;
+import com.reider745.innercoretoolchain.Toolchain;
 import com.reider745.innercoretoolchain.json.mod.*;
 import com.reider745.innercoretoolchain.util.Logs;
 
@@ -28,10 +28,10 @@ public class AssemlyMod extends Mod {
     private static List<String> getDeclarations(String type) {
         final List<String> declarations = new ArrayList<>();
         if(type.equals("launcher"))
-            declarations.add(Main.getDeclarationsPath() + "launcher.d.ts");
+            declarations.add(Toolchain.getDeclarationsPath() + "launcher.d.ts");
 
-        declarations.add(Main.getDeclarationsPath() + "core-engine.d.ts");
-        declarations.add(Main.getDeclarationsPath() + "android.d.ts");
+        declarations.add(Toolchain.getDeclarationsPath() + "core-engine.d.ts");
+        declarations.add(Toolchain.getDeclarationsPath() + "android.d.ts");
 
         return declarations;
     }
@@ -59,7 +59,7 @@ public class AssemlyMod extends Mod {
     }
 
     public File getGradleBuild() {
-        return new File(Main.getCache(), "build-" + getName());
+        return new File(Toolchain.getCache(), "build-" + getName());
     }
 
     private void installGradle(SourceDescriptionJson source) throws IOException {
@@ -75,7 +75,7 @@ public class AssemlyMod extends Mod {
 
         gradle = gradle.replace("{src}", source.source);
         gradle = gradle.replace("{buildDir}", getGradleBuild().getAbsolutePath());
-        gradle = gradle.replace("{classpath}", Main.getClasspath().getAbsolutePath());
+        gradle = gradle.replace("{classpath}", Toolchain.getClasspath().getAbsolutePath());
 
         Files.writeString(new File(this.dir, "build.gradle").toPath(), gradle);
 

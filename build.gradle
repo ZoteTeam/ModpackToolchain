@@ -29,7 +29,7 @@ dependencies {
 }
 
 application {
-    mainClass = "com.reider745.innercoretoolchain.Main"
+    mainClass = "com.reider745.innercoretoolchain.Toolchain"
 }
 
 run {

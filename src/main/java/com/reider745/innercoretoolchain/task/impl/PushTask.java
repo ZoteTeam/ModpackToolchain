@@ -1,6 +1,6 @@
-package com.reider745.innercoretoolchain.task;
+package com.reider745.innercoretoolchain.task.impl;
 
-import com.reider745.innercoretoolchain.util.Logs;
+import com.reider745.innercoretoolchain.task.Task;
 
 import java.io.IOException;
 
