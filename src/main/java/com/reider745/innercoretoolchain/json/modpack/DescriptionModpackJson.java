@@ -6,4 +6,5 @@ public class DescriptionModpackJson {
     public String author;
     public String description;
     public DescriptionModJson[] mods;
+    public ServerDescriptionJson[] servers;
 }

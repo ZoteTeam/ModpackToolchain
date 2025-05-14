@@ -1,6 +1,6 @@
 {
   "pushTo": "/storage/emulated/0/Android/media/com.zheka.horizon64/packs/Inner_Core__ARM64_/modpacks",
-  "serverVersion": "indev-1.5.0",
+  "serverVersion": "beta-1.0.0",
   "proxy": "innercore.novadev.ru:666",
 
   "author": "Reider745",

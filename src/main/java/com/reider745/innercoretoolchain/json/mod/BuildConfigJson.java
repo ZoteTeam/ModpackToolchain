@@ -30,9 +30,11 @@ public class BuildConfigJson {
         }
     }
 
+    public record PathJson(String path) {}
+
     private final DefaultConfigJson defaultConfig = new DefaultConfigJson();
     public final List<CompileSourceJson> compile = new ArrayList<>();
     public final List<ResourceJson> resources = new ArrayList<>();
-    public final List<Object> javaDirs = new ArrayList<>();
-    public final List<Object> nativeDirs = new ArrayList<>();
+    public final List<PathJson> javaDirs = new ArrayList<>();
+    public final List<PathJson> nativeDirs = new ArrayList<>();
 }

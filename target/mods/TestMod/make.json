@@ -9,16 +9,16 @@
   "config": "config.json",
 
   "assets": [],
-  "additionally": [
-    {
-      "source": "libs"
-    },
-    {
-      "source": "test.txt"
-    }
-  ],
+
+  "additionally": [],
 
   "source": [
+    {
+      "type": "java",
+      "source": "java",
+      "boot": ["com.reider745.TestJava"]
+    },
+
     {
       "type": "launcher",
       "source": "launcher.js"

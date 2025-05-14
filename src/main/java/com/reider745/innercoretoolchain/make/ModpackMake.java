@@ -1,6 +1,7 @@
 package com.reider745.innercoretoolchain.make;
 
 import com.google.gson.Gson;
+import com.reider745.innercoretoolchain.json.modpack.ServerDescriptionJson;
 import com.reider745.innercoretoolchain.util.Logs;
 import com.reider745.innercoretoolchain.util.icmods.IcmodMod;
 import com.reider745.innercoretoolchain.json.mod.ModMakeJson;
@@ -17,6 +18,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 @Getter
 public class ModpackMake {
@@ -95,6 +97,30 @@ public class ModpackMake {
             final File outputMod = new File(modsFile, mod.getName());
             outputMod.mkdirs();
             mod.build(outputMod, new File(configFile, mod.getName() + "-config.json"));
+        }
+
+        {
+            final StringBuilder builder = new StringBuilder();
+            final ServerDescriptionJson[] servers = this.make.get(side, "servers", new ServerDescriptionJson[0]);
+
+            int index = 1;
+            for(ServerDescriptionJson server : servers) {
+                builder.append(index++);
+                builder.append(':');
+                builder.append(server.name);
+                builder.append(':');
+                builder.append(server.ip);
+                builder.append(':');
+                builder.append(server.port);
+                builder.append(':');
+                builder.append(index);
+                builder.append('\n');
+            }
+
+            Files.writeString(
+                    new File(directory, "external_servers.txt").toPath(),
+                    builder.toString()
+            );
         }
     }
 

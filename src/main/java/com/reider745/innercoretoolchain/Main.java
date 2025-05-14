@@ -8,9 +8,8 @@ import com.reider745.innercoretoolchain.task.PushTask;
 import com.reider745.innercoretoolchain.task.RunServerTask;
 import com.reider745.innercoretoolchain.task.UpdateDeclarationsTask;
 import com.reider745.innercoretoolchain.type.Side;
+import com.reider745.innercoretoolchain.util.DownloadUtil;
 import lombok.Getter;
-import org.fusesource.jansi.Ansi;
-import org.fusesource.jansi.AnsiConsole;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,6 +18,11 @@ import java.nio.file.Files;
 public class Main {
     @Getter
     private static File declarations;
+    @Getter
+    private static File cache;
+    @Getter
+    private static File classpath;
+
     private static File make;
 
     public static String getDeclarationsPath() {
@@ -30,23 +34,31 @@ public class Main {
     }
 
     public static void main(String[] args) throws Exception {
-        /*System.out.println("Ходит кот у <UNK> <UNK");
-        String initialMessage = "Initial message...     "; // Добавляем пробелы для перезаписи
-        System.out.print(initialMessage); // Используем print, а не println
-
-        Thread.sleep(3000);
-
-        String newMessage = "Updated message!       "; // Добавляем пробелы для перезаписи
-        System.out.print("\r"); // Move cursor to the beginning of the current line
-        System.out.print(newMessage);
-        System.out.flush(); // Important!*/
-
-
-
         final File WORKING = new File(System.getProperty("user.dir"));
         final File TARGET = new File(WORKING, "target");
         make = new File("make.json");
         final File MODPACK = new File(TARGET, "modpacks/dev");
+
+        cache = new File("cache");
+        cache.mkdir();
+
+        classpath = new File("classpath");
+        classpath.mkdir();
+
+        {
+            final String[] files = new String[] {
+                    "android.jar",
+                    "horizon-1.2.jar",
+                    "innercore-test.jar"
+            };
+
+            for(String file : files) {
+                final File outputJava = new File(classpath, file);
+                if (!outputJava.exists()) {
+                    Files.write(outputJava.toPath(), DownloadUtil.readHttp("https://raw.githubusercontent.com/zheka2304/innercore-mod-toolchain/refs/heads/develop/toolchain/toolchain/classpath/" + file));
+                }
+            }
+        }
 
         declarations = new File(WORKING, "declarations");
         if(declarations.mkdirs()) {

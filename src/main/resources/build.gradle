@@ -1,0 +1,42 @@
+plugins {
+    id 'java'
+    id 'xyz.wagyourtail.jvmdowngrader' version '0.5.0'
+}
+
+downgradeJar {
+    downgradeTo = JavaVersion.VERSION_1_8
+}
+
+shadeDowngradedApi {
+    downgradeTo = JavaVersion.VERSION_1_8
+}
+
+dependencies {
+    implementation fileTree(dir: "{classpath}", include:  '*.jar')
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ["{src}"]
+            buildDir = "{buildDir}"
+        }
+
+        resources {
+            srcDirs = []
+        }
+
+        compileClasspath += files(fileTree(dir: "{classpath}", include:  '*.jar'))
+    }
+}
+
+task buildjar(type: Jar) {
+    from sourceSets.main.output
+}
+
+task buildAndDowngrade(type: xyz.wagyourtail.jvmdg.gradle.task.DowngradeJar, dependsOn: buildjar) {
+    inputFile = tasks.jar.archiveFile
+    downgradeTo = JavaVersion.VERSION_1_8
+    classpath = sourceSets.main.compileClasspath
+    archiveClassifier = "downgraded-8"
+}

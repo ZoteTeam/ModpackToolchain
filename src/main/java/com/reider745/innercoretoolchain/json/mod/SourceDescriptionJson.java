@@ -6,4 +6,5 @@ public class SourceDescriptionJson {
     public String source;
 
     public boolean fast = false;
+    public String[] boot = new String[0];
 }

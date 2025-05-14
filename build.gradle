@@ -15,18 +15,18 @@ dependencies {
     implementation("com.google.code.gson:gson:2.13.1")
     implementation 'org.fusesource.jansi:jansi:2.4.2'
 
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.19.0")
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.13.0'
+
     // https://mvnrepository.com/artifact/org.projectlombok/lombok
     compileOnly("org.projectlombok:lombok:1.18.38")
     annotationProcessor("org.projectlombok:lombok:1.18.38")
 
+    implementation files("libs/r8.jar")
+
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
 }
-
-tasks.test {
-    useJUnitPlatform()
-}
-
 
 application {
     mainClass = "com.reider745.innercoretoolchain.Main"
@@ -34,7 +34,7 @@ application {
 
 run {
     workingDir 'target'
-    args("buildServer", "runServer")
+    args("buildServer", "buildClient", "stop", "push", "launch")
     standardInput System.in
 }
 

@@ -1,5 +1,6 @@
 package com.reider745.innercoretoolchain.make.mod;
 
+import com.android.tools.r8.SwissArmyKnife;
 import com.google.gson.Gson;
 import com.reider745.innercoretoolchain.Main;
 import com.reider745.innercoretoolchain.json.mod.*;
@@ -9,7 +10,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class AssemlyMod extends Mod {
     private static final Gson GSON = new Gson();
@@ -55,16 +58,100 @@ public class AssemlyMod extends Mod {
         }
     }
 
-    private void buildSource(File output, SourceDescriptionJson source, BuildConfigJson buildConfigJson, List<String> declarations) throws IOException {
-        final File file = new File(dir, source.source);
+    public File getGradleBuild() {
+        return new File(Main.getCache(), "build-" + getName());
+    }
 
+    private void installGradle(SourceDescriptionJson source) throws IOException {
+        final ClassLoader classLoader = AssemlyMod.class.getClassLoader();
+        final File gradlew = new File(dir, "gradlew");
+        if(!gradlew.exists())
+            Files.write(gradlew.toPath(), classLoader.getResourceAsStream(gradlew.getName()).readAllBytes());
+        final File gradlewBat = new File(dir, "gradlew.bat");
+        if(!gradlewBat.exists())
+            Files.write(gradlewBat.toPath(), classLoader.getResourceAsStream(gradlewBat.getName()).readAllBytes());
+
+        String gradle = new String(classLoader.getResourceAsStream("build.gradle").readAllBytes());
+
+        gradle = gradle.replace("{src}", source.source);
+        gradle = gradle.replace("{buildDir}", getGradleBuild().getAbsolutePath());
+        gradle = gradle.replace("{classpath}", Main.getClasspath().getAbsolutePath());
+
+        Files.writeString(new File(this.dir, "build.gradle").toPath(), gradle);
+
+        final File settings = new File(this.dir, "settings.gradle");
+        if(!settings.exists()) {
+            Files.writeString(settings.toPath(), "rootProject.name = '" + getName() + "'");
+        }
+
+        final File wrapper = new File(this.dir, "gradle/wrapper");
+        wrapper.mkdirs();
+
+        final File gradleWrapperJar = new File(wrapper, "gradle-wrapper.jar");
+        if(!gradleWrapperJar.exists()) {
+            Files.write(gradleWrapperJar.toPath(), classLoader.getResourceAsStream(gradleWrapperJar.getName()).readAllBytes());
+        }
+
+        final File gradleWrapperProperties = new File(wrapper, "gradle-wrapper.properties");
+        if(!gradleWrapperProperties.exists()) {
+            Files.write(gradleWrapperProperties.toPath(), classLoader.getResourceAsStream(gradleWrapperProperties.getName()).readAllBytes());
+        }
+    }
+
+    private void buildJava(File output, SourceDescriptionJson source, BuildConfigJson config) throws IOException {
+        installGradle(source);
+
+        final ProcessBuilder pb = new ProcessBuilder();
+        pb.directory(this.dir);
+        pb.inheritIO();
+
+        String mainFile = this.dir.getAbsolutePath() + "/gradlew";
+        if (System.getProperty("os.name").toLowerCase().contains("windows")) {
+            mainFile = mainFile.replace("sh ", "") + ".bat";
+            pb.command(mainFile, "buildAndDowngrade");
+        } else
+            pb.command("sh", mainFile, "buildAndDowngrade");
+
+        try {
+            pb.start().waitFor();
+            final File outputJava = new File(output, "java");
+            outputJava.mkdirs();
+            SwissArmyKnife.main(new String[] {
+                "d8", "--min-api", "19", "--release", "--output", outputJava.getAbsolutePath(),
+                    new File(getGradleBuild(), "libs/" + getName() +"-downgraded-8.jar").getAbsolutePath()
+            });
+
+            final Map<String, Object> manifest = new HashMap<>();
+
+            manifest.put("source-dirs", new String[0]);
+            manifest.put("library-dirs", new String[0]);
+            manifest.put("verbose", true);
+            manifest.put("options", new String[0]);
+            manifest.put("boot-classes", source.boot);
+
+            Files.writeString(new File(outputJava, "manifest").toPath(), GSON.toJson(manifest));
+
+            config.javaDirs.add(new BuildConfigJson.PathJson("java"));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void buildSource(File output, SourceDescriptionJson source, BuildConfigJson buildConfigJson, List<String> declarations) throws IOException {
+        if(source.type.equals("java")) {
+            buildJava(output, source, buildConfigJson);
+            return;
+        }
+
+        final File file = new File(dir, source.source);
         if(!file.exists())
             return;
 
-
         if(source.type.equals("library")) {
             source.fast = true;
-            source.name = new File(output, source.source).getName();
+            final File libs = new File(output, "libs");
+            libs.mkdirs();
+            source.name = "libs/" + new File(libs, source.source).getName();
         }
 
         if(source.name == null)
