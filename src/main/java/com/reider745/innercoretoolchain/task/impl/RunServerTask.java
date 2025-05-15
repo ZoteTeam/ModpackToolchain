@@ -54,7 +54,7 @@ public class RunServerTask extends Task {
             System.out.println();
 
 
-            final ProcessBuilder pb = new ProcessBuilder("java", "-jar", file.getName(), "-Djava.net.preferIPv4Stack=true");
+            final ProcessBuilder pb = new ProcessBuilder("java", "-jar", file.getName());
             pb.directory(working);
             pb.inheritIO();
 

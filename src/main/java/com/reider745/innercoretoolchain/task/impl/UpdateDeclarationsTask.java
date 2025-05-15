@@ -13,7 +13,7 @@ public class UpdateDeclarationsTask extends Task {
     public void run() {
         final File declarations = Toolchain.getDeclarations();
         try {
-            Files.write(new File(declarations, "launcher.d.ts").toPath(), Toolchain.class.getClassLoader().getResourceAsStream("launcher.d.ts").readAllBytes());
+            Files.write(new File(declarations, "declarations/launcher.d.ts").toPath(), Toolchain.class.getClassLoader().getResourceAsStream("declarations/launcher.d.ts").readAllBytes());
             Files.writeString(
                     new File(declarations, "core-engine.d.ts").toPath(),
                     DownloadUtil.readStringHttp(

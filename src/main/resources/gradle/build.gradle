@@ -1,3 +1,5 @@
+package gradle
+
 plugins {
     id 'java'
     id 'xyz.wagyourtail.jvmdowngrader' version '0.5.0'
