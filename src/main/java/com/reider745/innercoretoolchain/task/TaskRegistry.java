@@ -22,6 +22,8 @@ public class TaskRegistry {
         register("launch", new ProcessBuildersTask(new ProcessBuilder("adb", "shell", "touch", "/storage/emulated/0/games/horizon/.flag_auto_launch"),
                 new ProcessBuilder("adb", "shell", "monkey", "-p", "com.zheka.horizon64", "-c", "android.intent.category.LAUNCHER", "1")));
         register("updateDeclarations", new UpdateDeclarationsTask());
+        register("updateClasspath", new UpdateClasspathTask());
+        register("newMod", new NewModTask());
     }
 
     public static void runTask(String name) {

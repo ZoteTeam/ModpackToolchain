@@ -11,9 +11,9 @@ import java.nio.file.Files;
 public class UpdateDeclarationsTask extends Task {
     @Override
     public void run() {
-        final File declarations = Toolchain.getDeclarations();
+        final File declarations = Toolchain.getDECLARATIONS();
         try {
-            Files.write(new File(declarations, "declarations/launcher.d.ts").toPath(), Toolchain.class.getClassLoader().getResourceAsStream("declarations/launcher.d.ts").readAllBytes());
+            Files.write(new File(declarations, "launcher.d.ts").toPath(), Toolchain.class.getClassLoader().getResourceAsStream("declarations/launcher.d.ts").readAllBytes());
             Files.writeString(
                     new File(declarations, "core-engine.d.ts").toPath(),
                     DownloadUtil.readStringHttp(

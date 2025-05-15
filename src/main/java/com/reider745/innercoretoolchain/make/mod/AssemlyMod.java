@@ -28,7 +28,7 @@ public class AssemlyMod extends Mod {
     private static List<String> getDeclarations(String type) {
         final List<String> declarations = new ArrayList<>();
         if(type.equals("launcher"))
-            declarations.add(Toolchain.getDeclarationsPath() + "declarations/launcher.d.ts");
+            declarations.add(Toolchain.getDeclarationsPath() + "launcher.d.ts");
 
         declarations.add(Toolchain.getDeclarationsPath() + "core-engine.d.ts");
         declarations.add(Toolchain.getDeclarationsPath() + "android.d.ts");
@@ -59,25 +59,25 @@ public class AssemlyMod extends Mod {
     }
 
     public File getGradleBuild() {
-        return new File(Toolchain.getCache(), "build-" + getName());
+        return new File(Toolchain.getCACHE(), "build-" + getName());
     }
 
     private void installGradle(SourceDescriptionJson source) throws IOException {
         final ClassLoader classLoader = AssemlyMod.class.getClassLoader();
-        final File gradlew = new File(dir, "gradle/gradlew");
+        final File gradlew = new File(dir, "gradlew");
         if(!gradlew.exists())
-            Files.write(gradlew.toPath(), classLoader.getResourceAsStream(gradlew.getName()).readAllBytes());
-        final File gradlewBat = new File(dir, "gradle/gradlew.bat");
+            Files.write(gradlew.toPath(), classLoader.getResourceAsStream("gradle/gradlew").readAllBytes());
+        final File gradlewBat = new File(dir, "gradlew.bat");
         if(!gradlewBat.exists())
-            Files.write(gradlewBat.toPath(), classLoader.getResourceAsStream(gradlewBat.getName()).readAllBytes());
+            Files.write(gradlewBat.toPath(), classLoader.getResourceAsStream("gradle/gradlew.bat").readAllBytes());
 
         String gradle = new String(classLoader.getResourceAsStream("gradle/build.gradle").readAllBytes());
 
         gradle = gradle.replace("{src}", source.source);
         gradle = gradle.replace("{buildDir}", getGradleBuild().getAbsolutePath());
-        gradle = gradle.replace("{classpath}", Toolchain.getClasspath().getAbsolutePath());
+        gradle = gradle.replace("{classpath}", Toolchain.getCLASSPATH().getAbsolutePath());
 
-        Files.writeString(new File(this.dir, "gradle/build.gradle").toPath(), gradle);
+        Files.writeString(new File(this.dir, "build.gradle").toPath(), gradle);
 
         final File settings = new File(this.dir, "settings.gradle");
         if(!settings.exists()) {
@@ -87,14 +87,14 @@ public class AssemlyMod extends Mod {
         final File wrapper = new File(this.dir, "gradle/wrapper");
         wrapper.mkdirs();
 
-        final File gradleWrapperJar = new File(wrapper, "gradle/gradle-wrapper.jar");
+        final File gradleWrapperJar = new File(wrapper, "gradle-wrapper.jar");
         if(!gradleWrapperJar.exists()) {
-            Files.write(gradleWrapperJar.toPath(), classLoader.getResourceAsStream(gradleWrapperJar.getName()).readAllBytes());
+            Files.write(gradleWrapperJar.toPath(), classLoader.getResourceAsStream("gradle/gradle-wrapper.jar").readAllBytes());
         }
 
-        final File gradleWrapperProperties = new File(wrapper, "gradle/gradle-wrapper.properties");
+        final File gradleWrapperProperties = new File(wrapper, "gradle-wrapper.properties");
         if(!gradleWrapperProperties.exists()) {
-            Files.write(gradleWrapperProperties.toPath(), classLoader.getResourceAsStream(gradleWrapperProperties.getName()).readAllBytes());
+            Files.write(gradleWrapperProperties.toPath(), classLoader.getResourceAsStream("gradle/gradle-wrapper.properties").readAllBytes());
         }
     }
 
@@ -105,7 +105,7 @@ public class AssemlyMod extends Mod {
         pb.directory(this.dir);
         pb.inheritIO();
 
-        String mainFile = this.dir.getAbsolutePath() + "/gradle/gradlew";
+        String mainFile = this.dir.getAbsolutePath() + "/gradlew";
         if (System.getProperty("os.name").toLowerCase().contains("windows")) {
             mainFile = mainFile.replace("sh ", "") + ".bat";
             pb.command(mainFile, "buildAndDowngrade");
@@ -113,25 +113,26 @@ public class AssemlyMod extends Mod {
             pb.command("sh", mainFile, "buildAndDowngrade");
 
         try {
-            pb.start().waitFor();
-            final File outputJava = new File(output, "java");
-            outputJava.mkdirs();
-            SwissArmyKnife.main(new String[] {
-                "d8", "--min-api", "19", "--release", "--output", outputJava.getAbsolutePath(),
-                    new File(getGradleBuild(), "libs/" + getName() +"-downgraded-8.jar").getAbsolutePath()
-            });
+            if(pb.start().waitFor() == 0) {
+                final File outputJava = new File(output, "java");
+                outputJava.mkdirs();
+                SwissArmyKnife.main(new String[]{
+                        "d8", "--min-api", "19", "--release", "--output", outputJava.getAbsolutePath(),
+                        new File(getGradleBuild(), "libs/" + getName() + "-downgraded-8.jar").getAbsolutePath()
+                });
 
-            final Map<String, Object> manifest = new HashMap<>();
+                final Map<String, Object> manifest = new HashMap<>();
 
-            manifest.put("source-dirs", new String[0]);
-            manifest.put("library-dirs", new String[0]);
-            manifest.put("verbose", true);
-            manifest.put("options", new String[0]);
-            manifest.put("boot-classes", source.boot);
+                manifest.put("source-dirs", new String[0]);
+                manifest.put("library-dirs", new String[0]);
+                manifest.put("verbose", true);
+                manifest.put("options", new String[0]);
+                manifest.put("boot-classes", source.boot);
 
-            Files.writeString(new File(outputJava, "manifest").toPath(), GSON.toJson(manifest));
+                Files.writeString(new File(outputJava, "manifest").toPath(), GSON.toJson(manifest));
 
-            config.javaDirs.add(new BuildConfigJson.PathJson("java"));
+                config.javaDirs.add(new BuildConfigJson.PathJson("java"));
+            }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

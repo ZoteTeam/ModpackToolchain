@@ -5,11 +5,20 @@ import com.reider745.innercoretoolchain.type.Side;
 import java.lang.reflect.Field;
 
 public class ModpackMakeJson extends DescriptionModpackJson {
-    public String serverVersion;
-    public String proxy;
+    public String serverVersion = "beta-1.0.0";
+    public String proxy = "innercore.novadev.ru:666";
     public DescriptionModpackJson client;
     public DescriptionModpackJson server;
     public String pushTo;
+
+    public ModpackMakeJson() {}
+
+    public ModpackMakeJson(String pushTo, String name, String version, String author, String description) {
+        super(name, author, version, description);
+        this.pushTo = pushTo;
+        this.client = new DescriptionModpackJson();
+        this.server = new DescriptionModpackJson();
+    }
 
     public <T>T get(Side side, String name, T def) {
         try {

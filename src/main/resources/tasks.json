@@ -1,0 +1,94 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Build to client",
+      "type": "shell",
+      "presentation": {
+        "focus": true
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "command": "java -jar toolchain.jar buildClient"
+    },
+    {
+      "label": "Build to server",
+      "type": "shell",
+      "presentation": {
+        "focus": true
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "command": "java -jar toolchain.jar buildServer"
+    },
+
+    {
+      "label": "Run server",
+      "type": "shell",
+      "presentation": {
+        "focus": true
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "command": "java -jar toolchain.jar buildServer runServer"
+    },
+
+    {
+      "label": "Run client",
+      "type": "shell",
+      "presentation": {
+        "focus": true
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "command": "java -jar toolchain.jar buildClient stop push launch"
+    },
+
+    {
+      "label": "New mod",
+      "type": "shell",
+      "presentation": {
+        "focus": true
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "command": "java -jar toolchain.jar newMod"
+    },
+
+    {
+      "label": "Update components",
+      "type": "shell",
+      "presentation": {
+        "focus": true
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "command": "java -jar toolchain.jar updateDeclarations updateClasspath"
+    },
+
+    {
+      "label": "Run client & server",
+      "type": "shell",
+      "presentation": {
+        "focus": true
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "command": "java -jar toolchain.jar buildClient buildServer stop push launch runServer"
+    }
+  ]
+}

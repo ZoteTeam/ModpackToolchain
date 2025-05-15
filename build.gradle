@@ -34,7 +34,7 @@ application {
 
 run {
     workingDir 'target'
-    args("buildServer", "buildClient", "stop", "push", "launch")
+    args("buildServer", "buildClient", "push")
     standardInput System.in
 }
 
